@@ -9,6 +9,14 @@ struct DHCPConfigView: View {
     @State private var leaseToDelete: DHCPLease?
     @State private var showDeleteConfirmation = false
 
+    // Edit states
+    @State private var rangeToEdit: (lease: DHCPLease, range: DHCPRange)?
+    @State private var hostToEdit: (lease: DHCPLease, host: DHCPHost)?
+    @State private var optionToEdit: (lease: DHCPLease, option: DHCPOption)?
+    @State private var isEditingRange = false
+    @State private var isEditingHost = false
+    @State private var isEditingOption = false
+
     private var ranges: [DHCPLease] {
         configManager.config.dhcpLeases.filter {
             if case .range = $0.entryType { return true }
@@ -61,6 +69,14 @@ struct DHCPConfigView: View {
                     Label("Save", systemImage: "square.and.arrow.down")
                 }
                 .disabled(!configManager.hasUnsavedChanges)
+
+                Button(action: {
+                    Task {
+                        await configManager.loadConfig()
+                    }
+                }) {
+                    Label("Reload", systemImage: "arrow.clockwise")
+                }
             }
             .padding()
             .background(Color(NSColor.controlBackgroundColor))
@@ -83,19 +99,28 @@ struct DHCPConfigView: View {
                 Spacer()
             } else {
                 TabView(selection: $selectedTab) {
-                    DHCPRangeList(ranges: ranges, onDelete: { lease in
+                    DHCPRangeList(ranges: ranges, onEdit: { lease, range in
+                        rangeToEdit = (lease, range)
+                        isEditingRange = true
+                    }, onDelete: { lease in
                         leaseToDelete = lease
                         showDeleteConfirmation = true
                     })
                     .tag(0)
 
-                    DHCPHostList(hosts: hosts, onDelete: { lease in
+                    DHCPHostList(hosts: hosts, onEdit: { lease, host in
+                        hostToEdit = (lease, host)
+                        isEditingHost = true
+                    }, onDelete: { lease in
                         leaseToDelete = lease
                         showDeleteConfirmation = true
                     })
                     .tag(1)
 
-                    DHCPOptionList(options: options, onDelete: { lease in
+                    DHCPOptionList(options: options, onEdit: { lease, option in
+                        optionToEdit = (lease, option)
+                        isEditingOption = true
+                    }, onDelete: { lease in
                         leaseToDelete = lease
                         showDeleteConfirmation = true
                     })
@@ -104,19 +129,45 @@ struct DHCPConfigView: View {
                 .tabViewStyle(.automatic)
             }
         }
+        // Add sheets
         .sheet(isPresented: $isAddingRange) {
-            DHCPRangeEditor { range in
+            DHCPRangeEditor(mode: .add) { range in
                 configManager.addDHCPLease(DHCPLease(entryType: .range(range)))
             }
         }
         .sheet(isPresented: $isAddingHost) {
-            DHCPHostEditor { host in
+            DHCPHostEditor(mode: .add) { host in
                 configManager.addDHCPLease(DHCPLease(entryType: .host(host)))
             }
         }
         .sheet(isPresented: $isAddingOption) {
-            DHCPOptionEditor { option in
+            DHCPOptionEditor(mode: .add) { option in
                 configManager.addDHCPLease(DHCPLease(entryType: .option(option)))
+            }
+        }
+        // Edit sheets
+        .sheet(isPresented: $isEditingRange) {
+            if let edit = rangeToEdit {
+                DHCPRangeEditor(mode: .edit(edit.range)) { updatedRange in
+                    let updatedLease = DHCPLease(id: edit.lease.id, entryType: .range(updatedRange))
+                    configManager.updateDHCPLease(updatedLease)
+                }
+            }
+        }
+        .sheet(isPresented: $isEditingHost) {
+            if let edit = hostToEdit {
+                DHCPHostEditor(mode: .edit(edit.host)) { updatedHost in
+                    let updatedLease = DHCPLease(id: edit.lease.id, entryType: .host(updatedHost))
+                    configManager.updateDHCPLease(updatedLease)
+                }
+            }
+        }
+        .sheet(isPresented: $isEditingOption) {
+            if let edit = optionToEdit {
+                DHCPOptionEditor(mode: .edit(edit.option)) { updatedOption in
+                    let updatedLease = DHCPLease(id: edit.lease.id, entryType: .option(updatedOption))
+                    configManager.updateDHCPLease(updatedLease)
+                }
             }
         }
         .alert("Delete Entry", isPresented: $showDeleteConfirmation, presenting: leaseToDelete) { lease in
@@ -134,6 +185,7 @@ struct DHCPConfigView: View {
 
 struct DHCPRangeList: View {
     let ranges: [DHCPLease]
+    let onEdit: (DHCPLease, DHCPRange) -> Void
     let onDelete: (DHCPLease) -> Void
 
     var body: some View {
@@ -150,12 +202,18 @@ struct DHCPRangeList: View {
             List {
                 ForEach(ranges) { lease in
                     if case .range(let range) = lease.entryType {
-                        DHCPRangeRow(range: range)
-                            .contextMenu {
-                                Button("Delete", role: .destructive) {
-                                    onDelete(lease)
-                                }
+                        DHCPRangeRow(range: range, onEdit: {
+                            onEdit(lease, range)
+                        })
+                        .contextMenu {
+                            Button("Edit") {
+                                onEdit(lease, range)
                             }
+                            Divider()
+                            Button("Delete", role: .destructive) {
+                                onDelete(lease)
+                            }
+                        }
                     }
                 }
             }
@@ -166,39 +224,53 @@ struct DHCPRangeList: View {
 
 struct DHCPRangeRow: View {
     let range: DHCPRange
+    let onEdit: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text("\(range.startIP) - \(range.endIP)")
-                    .font(.body)
-                    .fontWeight(.medium)
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text("\(range.startIP) - \(range.endIP)")
+                        .font(.body)
+                        .fontWeight(.medium)
 
-                Spacer()
+                    Spacer()
 
-                Text(range.leaseTime)
-                    .font(.caption)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Color.blue.opacity(0.2))
-                    .foregroundColor(.blue)
-                    .cornerRadius(4)
+                    Text(range.leaseTime)
+                        .font(.caption)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.blue.opacity(0.2))
+                        .foregroundColor(.blue)
+                        .cornerRadius(4)
+                }
+
+                if let netmask = range.netmask {
+                    Text("Netmask: \(netmask)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                if let comment = range.comment {
+                    Text(comment)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .italic()
+                }
             }
 
-            if let netmask = range.netmask {
-                Text("Netmask: \(netmask)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+            Button(action: onEdit) {
+                Image(systemName: "pencil.circle")
+                    .font(.title2)
+                    .foregroundColor(.accentColor)
             }
-
-            if let comment = range.comment {
-                Text(comment)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                    .italic()
-            }
+            .buttonStyle(.plain)
         }
         .padding(.vertical, 4)
+        .contentShape(Rectangle())
+        .onTapGesture(count: 2) {
+            onEdit()
+        }
     }
 }
 
@@ -206,6 +278,7 @@ struct DHCPRangeRow: View {
 
 struct DHCPHostList: View {
     let hosts: [DHCPLease]
+    let onEdit: (DHCPLease, DHCPHost) -> Void
     let onDelete: (DHCPLease) -> Void
 
     var body: some View {
@@ -222,12 +295,18 @@ struct DHCPHostList: View {
             List {
                 ForEach(hosts) { lease in
                     if case .host(let host) = lease.entryType {
-                        DHCPHostRow(host: host)
-                            .contextMenu {
-                                Button("Delete", role: .destructive) {
-                                    onDelete(lease)
-                                }
+                        DHCPHostRow(host: host, onEdit: {
+                            onEdit(lease, host)
+                        })
+                        .contextMenu {
+                            Button("Edit") {
+                                onEdit(lease, host)
                             }
+                            Divider()
+                            Button("Delete", role: .destructive) {
+                                onDelete(lease)
+                            }
+                        }
                     }
                 }
             }
@@ -238,43 +317,57 @@ struct DHCPHostList: View {
 
 struct DHCPHostRow: View {
     let host: DHCPHost
+    let onEdit: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                if let hostname = host.hostname {
-                    Text(hostname)
-                        .font(.body)
-                        .fontWeight(.medium)
-                } else {
-                    Text(host.macAddress)
-                        .font(.body)
-                        .fontWeight(.medium)
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    if let hostname = host.hostname {
+                        Text(hostname)
+                            .font(.body)
+                            .fontWeight(.medium)
+                    } else {
+                        Text(host.macAddress)
+                            .font(.body)
+                            .fontWeight(.medium)
+                    }
+
+                    Spacer()
+
+                    Text(host.ipAddress)
+                        .font(.caption)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.green.opacity(0.2))
+                        .foregroundColor(.green)
+                        .cornerRadius(4)
                 }
 
-                Spacer()
-
-                Text(host.ipAddress)
+                Text(host.macAddress)
                     .font(.caption)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Color.green.opacity(0.2))
-                    .foregroundColor(.green)
-                    .cornerRadius(4)
-            }
-
-            Text(host.macAddress)
-                .font(.caption)
-                .foregroundColor(.secondary)
-
-            if let comment = host.comment {
-                Text(comment)
-                    .font(.caption2)
                     .foregroundColor(.secondary)
-                    .italic()
+
+                if let comment = host.comment {
+                    Text(comment)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .italic()
+                }
             }
+
+            Button(action: onEdit) {
+                Image(systemName: "pencil.circle")
+                    .font(.title2)
+                    .foregroundColor(.accentColor)
+            }
+            .buttonStyle(.plain)
         }
         .padding(.vertical, 4)
+        .contentShape(Rectangle())
+        .onTapGesture(count: 2) {
+            onEdit()
+        }
     }
 }
 
@@ -282,6 +375,7 @@ struct DHCPHostRow: View {
 
 struct DHCPOptionList: View {
     let options: [DHCPLease]
+    let onEdit: (DHCPLease, DHCPOption) -> Void
     let onDelete: (DHCPLease) -> Void
 
     var body: some View {
@@ -298,12 +392,18 @@ struct DHCPOptionList: View {
             List {
                 ForEach(options) { lease in
                     if case .option(let option) = lease.entryType {
-                        DHCPOptionRow(option: option)
-                            .contextMenu {
-                                Button("Delete", role: .destructive) {
-                                    onDelete(lease)
-                                }
+                        DHCPOptionRow(option: option, onEdit: {
+                            onEdit(lease, option)
+                        })
+                        .contextMenu {
+                            Button("Edit") {
+                                onEdit(lease, option)
                             }
+                            Divider()
+                            Button("Delete", role: .destructive) {
+                                onDelete(lease)
+                            }
+                        }
                     }
                 }
             }
@@ -314,43 +414,68 @@ struct DHCPOptionList: View {
 
 struct DHCPOptionRow: View {
     let option: DHCPOption
+    let onEdit: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(option.optionName)
-                    .font(.body)
-                    .fontWeight(.medium)
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(option.optionName)
+                        .font(.body)
+                        .fontWeight(.medium)
 
-                Spacer()
+                    Spacer()
 
-                Text("Option \(option.optionNumber)")
+                    Text("Option \(option.optionNumber)")
+                        .font(.caption)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.purple.opacity(0.2))
+                        .foregroundColor(.purple)
+                        .cornerRadius(4)
+                }
+
+                Text(option.value)
                     .font(.caption)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Color.purple.opacity(0.2))
-                    .foregroundColor(.purple)
-                    .cornerRadius(4)
-            }
-
-            Text(option.value)
-                .font(.caption)
-                .foregroundColor(.secondary)
-
-            if let comment = option.comment {
-                Text(comment)
-                    .font(.caption2)
                     .foregroundColor(.secondary)
-                    .italic()
+
+                if let comment = option.comment {
+                    Text(comment)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .italic()
+                }
             }
+
+            Button(action: onEdit) {
+                Image(systemName: "pencil.circle")
+                    .font(.title2)
+                    .foregroundColor(.accentColor)
+            }
+            .buttonStyle(.plain)
         }
         .padding(.vertical, 4)
+        .contentShape(Rectangle())
+        .onTapGesture(count: 2) {
+            onEdit()
+        }
     }
 }
 
 // MARK: - Editors
 
 struct DHCPRangeEditor: View {
+    enum Mode {
+        case add
+        case edit(DHCPRange)
+
+        var isEditing: Bool {
+            if case .edit = self { return true }
+            return false
+        }
+    }
+
+    let mode: Mode
     let onSave: (DHCPRange) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -361,6 +486,19 @@ struct DHCPRangeEditor: View {
     @State private var leaseTime = "12h"
     @State private var comment = ""
 
+    init(mode: Mode, onSave: @escaping (DHCPRange) -> Void) {
+        self.mode = mode
+        self.onSave = onSave
+
+        if case .edit(let range) = mode {
+            _startIP = State(initialValue: range.startIP)
+            _endIP = State(initialValue: range.endIP)
+            _netmask = State(initialValue: range.netmask ?? "")
+            _leaseTime = State(initialValue: range.leaseTime)
+            _comment = State(initialValue: range.comment ?? "")
+        }
+    }
+
     private var isValid: Bool {
         !startIP.isEmpty && !endIP.isEmpty && !leaseTime.isEmpty
     }
@@ -368,7 +506,7 @@ struct DHCPRangeEditor: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Add DHCP Range")
+                Text(mode.isEditing ? "Edit DHCP Range" : "Add DHCP Range")
                     .font(.headline)
                 Spacer()
                 Button("Cancel") { dismiss() }
@@ -397,7 +535,7 @@ struct DHCPRangeEditor: View {
                 Spacer()
                 Button("Cancel") { dismiss() }
                     .keyboardShortcut(.escape)
-                Button("Add") {
+                Button(mode.isEditing ? "Save" : "Add") {
                     let range = DHCPRange(
                         startIP: startIP,
                         endIP: endIP,
@@ -409,6 +547,7 @@ struct DHCPRangeEditor: View {
                     dismiss()
                 }
                 .keyboardShortcut(.return)
+                .buttonStyle(.borderedProminent)
                 .disabled(!isValid)
             }
             .padding()
@@ -418,6 +557,17 @@ struct DHCPRangeEditor: View {
 }
 
 struct DHCPHostEditor: View {
+    enum Mode {
+        case add
+        case edit(DHCPHost)
+
+        var isEditing: Bool {
+            if case .edit = self { return true }
+            return false
+        }
+    }
+
+    let mode: Mode
     let onSave: (DHCPHost) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -428,6 +578,19 @@ struct DHCPHostEditor: View {
     @State private var leaseTime = ""
     @State private var comment = ""
 
+    init(mode: Mode, onSave: @escaping (DHCPHost) -> Void) {
+        self.mode = mode
+        self.onSave = onSave
+
+        if case .edit(let host) = mode {
+            _macAddress = State(initialValue: host.macAddress)
+            _ipAddress = State(initialValue: host.ipAddress)
+            _hostname = State(initialValue: host.hostname ?? "")
+            _leaseTime = State(initialValue: host.leaseTime ?? "")
+            _comment = State(initialValue: host.comment ?? "")
+        }
+    }
+
     private var isValid: Bool {
         !macAddress.isEmpty && !ipAddress.isEmpty
     }
@@ -435,7 +598,7 @@ struct DHCPHostEditor: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Add Static Host")
+                Text(mode.isEditing ? "Edit Static Host" : "Add Static Host")
                     .font(.headline)
                 Spacer()
                 Button("Cancel") { dismiss() }
@@ -464,7 +627,7 @@ struct DHCPHostEditor: View {
                 Spacer()
                 Button("Cancel") { dismiss() }
                     .keyboardShortcut(.escape)
-                Button("Add") {
+                Button(mode.isEditing ? "Save" : "Add") {
                     let host = DHCPHost(
                         macAddress: macAddress,
                         ipAddress: ipAddress,
@@ -476,6 +639,7 @@ struct DHCPHostEditor: View {
                     dismiss()
                 }
                 .keyboardShortcut(.return)
+                .buttonStyle(.borderedProminent)
                 .disabled(!isValid)
             }
             .padding()
@@ -485,6 +649,17 @@ struct DHCPHostEditor: View {
 }
 
 struct DHCPOptionEditor: View {
+    enum Mode {
+        case add
+        case edit(DHCPOption)
+
+        var isEditing: Bool {
+            if case .edit = self { return true }
+            return false
+        }
+    }
+
+    let mode: Mode
     let onSave: (DHCPOption) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -494,6 +669,20 @@ struct DHCPOptionEditor: View {
     @State private var value = ""
     @State private var comment = ""
     @State private var useCustomOption = false
+
+    init(mode: Mode, onSave: @escaping (DHCPOption) -> Void) {
+        self.mode = mode
+        self.onSave = onSave
+
+        if case .edit(let option) = mode {
+            let isCommon = DHCPOption.commonOptions.contains { $0.0 == option.optionNumber }
+            _useCustomOption = State(initialValue: !isCommon)
+            _selectedOption = State(initialValue: isCommon ? option.optionNumber : 3)
+            _customOption = State(initialValue: isCommon ? "" : String(option.optionNumber))
+            _value = State(initialValue: option.value)
+            _comment = State(initialValue: option.comment ?? "")
+        }
+    }
 
     private var optionNumber: Int {
         useCustomOption ? (Int(customOption) ?? 0) : selectedOption
@@ -506,7 +695,7 @@ struct DHCPOptionEditor: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Add DHCP Option")
+                Text(mode.isEditing ? "Edit DHCP Option" : "Add DHCP Option")
                     .font(.headline)
                 Spacer()
                 Button("Cancel") { dismiss() }
@@ -543,7 +732,7 @@ struct DHCPOptionEditor: View {
                 Spacer()
                 Button("Cancel") { dismiss() }
                     .keyboardShortcut(.escape)
-                Button("Add") {
+                Button(mode.isEditing ? "Save" : "Add") {
                     let option = DHCPOption(
                         optionNumber: optionNumber,
                         value: value,
@@ -553,6 +742,7 @@ struct DHCPOptionEditor: View {
                     dismiss()
                 }
                 .keyboardShortcut(.return)
+                .buttonStyle(.borderedProminent)
                 .disabled(!isValid)
             }
             .padding()
