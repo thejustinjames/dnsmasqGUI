@@ -1,237 +1,195 @@
-# dnsmasqGUI
+<p align="center">
+  <img src="https://img.shields.io/badge/JJ-dnsmasqGUI-blueviolet?style=for-the-badge&labelColor=5c5ce6&color=9966ff" alt="JJ dnsmasqGUI" />
+</p>
 
-A native macOS GUI application for managing dnsmasq, built with SwiftUI. Provides a user-friendly interface for DNS/DHCP configuration, service control, and log viewing.
+<h1 align="center">
+  <br>
+  <img width="120" height="120" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMDA3QUZGIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjQUY1MkRFIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxMjAiIHJ4PSIyNCIgZmlsbD0idXJsKCNncmFkKSIvPjx0ZXh0IHg9IjYwIiB5PSI3NSIgZm9udC1mYW1pbHk9Ii1hcHBsZS1zeXN0ZW0sIEJsaW5rTWFjU3lzdGVtRm9udCwgJ1NlZ29lIFVJJywgUm9ib3RvLCBIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjU2IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkpKPC90ZXh0Pjwvc3ZnPg==" alt="JJ Logo">
+  <br>
+  dnsmasqGUI
+  <br>
+</h1>
 
-![macOS](https://img.shields.io/badge/macOS-13.0+-blue)
-![Swift](https://img.shields.io/badge/Swift-5.9+-orange)
-![License](https://img.shields.io/badge/License-MIT-green)
+<h4 align="center">A beautiful native macOS app for taming your local DNS/DHCP dragon</h4>
 
-## Features
+<p align="center">
+  <img src="https://img.shields.io/badge/macOS-13.0+-007AFF?style=flat-square&logo=apple&logoColor=white" alt="macOS 13.0+" />
+  <img src="https://img.shields.io/badge/Swift-5.9+-F05138?style=flat-square&logo=swift&logoColor=white" alt="Swift 5.9+" />
+  <img src="https://img.shields.io/badge/SwiftUI-Native-5c5ce6?style=flat-square&logo=swift&logoColor=white" alt="SwiftUI" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License" />
+</p>
 
-- **DNS Configuration** - Manage DNS records, upstream servers, and domain overrides
-- **DHCP Configuration** - Configure IP ranges, static leases, and DHCP options
-- **Service Control** - Start, stop, and restart dnsmasq with two execution modes:
-  - **Homebrew Services** - Managed via `brew services` (persistent, auto-start on boot)
-  - **Local Process** - Run dnsmasq directly (manual control, no persistence)
-- **Log Viewer** - Real-time log monitoring with filtering and export
-- **Path Configuration** - Customize dnsmasq binary and config file locations
+<p align="center">
+  <a href="#-features">Features</a> •
+  <a href="#-quick-start">Quick Start</a> •
+  <a href="#-installation">Installation</a> •
+  <a href="#-usage">Usage</a> •
+  <a href="#-build">Build</a> •
+  <a href="#-contributing">Contributing</a>
+</p>
 
-## Prerequisites
+---
 
-### 1. macOS Version
-- macOS 13.0 (Ventura) or later
+## Why dnsmasqGUI?
 
-### 2. Xcode (for building from source)
-- Xcode 15.0 or later
-- Install from the [Mac App Store](https://apps.apple.com/app/xcode/id497799835)
+Ever wished managing your local DNS server didn't require memorizing arcane config syntax and terminal incantations? **dnsmasqGUI** brings the power of dnsmasq to your fingertips with a clean, native macOS interface.
 
-### 3. Homebrew (Optional but Recommended)
-Homebrew is required for the "Homebrew Services" execution mode. If you don't have Homebrew installed:
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+No more:                          With dnsmasqGUI:
+vim /opt/homebrew/etc/dnsmasq.conf    Click "Add Record"
+address=/myapp.local/127.0.0.1   ->   Type domain, pick IP
+sudo brew services restart dnsmasq    Click "Save"
 ```
 
-### 4. dnsmasq
-**Option A: Install via Homebrew (Recommended)**
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| **DNS Management** | Add, edit, and test DNS records with a beautiful UI |
+| **DHCP Configuration** | Set up IP ranges, static leases, and network options |
+| **Dual-Mode Service Control** | Run via Homebrew Services OR as a local process |
+| **Live Log Viewer** | Watch DNS queries in real-time with filtering |
+| **DNS Testing** | Verify your records work before going live |
+| **Path Flexibility** | Works with custom dnsmasq installations |
+
+## 🚀 Quick Start
+
+**1. Have Homebrew? Get dnsmasq:**
 ```bash
 brew install dnsmasq
 ```
 
-**Option B: Manual Installation**
-If you prefer not to use Homebrew, you can compile dnsmasq from source or use another package manager. The app supports custom binary paths via Settings.
+**2. Grab the app:**
+- Download from [Releases](https://github.com/thejustinjames/dnsmasqGUI/releases)
+- Or build it yourself (see below)
 
-## Installation
+**3. Launch and go!**
+- Add your first DNS record in seconds
+- Hit "Test" to verify it works
+- Click "Save" and you're done
 
-### Option 1: Download Release (Recommended)
-1. Go to the [Releases](https://github.com/yourusername/dnsmasqGUI/releases) page
-2. Download the latest `dnsmasqGUI.app.zip`
-3. Unzip and drag `dnsmasqGUI.app` to your Applications folder
-4. Right-click and select "Open" (required for first launch of unsigned apps)
+## 📦 Installation
 
-### Option 2: Build from Source
+### Option A: Download Release
+1. Head to [Releases](https://github.com/thejustinjames/dnsmasqGUI/releases)
+2. Download `dnsmasqGUI-v1.0.0-macOS.zip` or `.dmg`
+3. Drag to Applications
+4. Right-click → Open (first launch only)
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/dnsmasqGUI.git
-   cd dnsmasqGUI
-   ```
-
-2. **Open in Xcode**
-   ```bash
-   open dnsmasqGUI.xcodeproj
-   ```
-
-3. **Build and Run**
-   - Press `Cmd + R` to build and run
-   - Or select Product → Build (`Cmd + B`) to build only
-
-4. **Export App (Optional)**
-   - Select Product → Archive
-   - In the Organizer, click "Distribute App"
-   - Choose "Copy App" to export the .app bundle
-
-## Initial Setup
-
-### 1. Configure dnsmasq
-Before using the GUI, ensure dnsmasq has a configuration file:
+### Option B: Build from Source
 ```bash
-# Create config if it doesn't exist
-if [ ! -f /opt/homebrew/etc/dnsmasq.conf ]; then
-    cp /opt/homebrew/opt/dnsmasq/dnsmasq.conf.example /opt/homebrew/etc/dnsmasq.conf
-fi
+git clone https://github.com/thejustinjames/dnsmasqGUI.git
+cd dnsmasqGUI
+make build        # Debug build
+make release      # Release build + ZIP
+make dmg          # Create installer DMG
 ```
 
-### 2. Start dnsmasq Service
-```bash
-sudo brew services start dnsmasq
-```
+## 🎮 Usage
 
-### 3. Configure macOS to Use dnsmasq (Optional)
-To use dnsmasq as your local DNS resolver:
-```bash
-# Create resolver directory
-sudo mkdir -p /etc/resolver
+### DNS Records Made Easy
 
-# Point .local domains to dnsmasq
-echo "nameserver 127.0.0.1" | sudo tee /etc/resolver/local
-```
-
-Or set your system DNS to `127.0.0.1` in System Settings → Network → DNS.
-
-## Usage
-
-### DNS Configuration
-1. Navigate to "DNS Configuration" in the sidebar
-2. Click "Add Record" to create a new DNS entry
-3. Choose the record type:
-   - **Address Override**: Map a domain to a specific IP
-   - **Upstream Server**: Use a specific DNS server for a domain
-   - **Local Only**: Answer locally, never forward
-4. Click "Save" to write changes to the config file
-
-### DHCP Configuration
-1. Navigate to "DHCP Configuration" in the sidebar
-2. Use the tabs to switch between:
-   - **Ranges**: Define DHCP IP address pools
-   - **Static Hosts**: Assign fixed IPs to MAC addresses
-   - **Options**: Configure DHCP options (gateway, DNS, etc.)
-3. Click "Save" to apply changes
+| Type | What It Does | Example |
+|------|--------------|---------|
+| **Address Override** | Point a domain to an IP | `myapp.local` → `127.0.0.1` |
+| **Upstream Server** | Use specific DNS for a domain | `*.corp` → `10.0.0.1` |
+| **Local Only** | Never forward, answer locally | `internal.dev` |
 
 ### Service Control
-1. Navigate to "Service Control" in the sidebar
-2. **Choose Execution Mode**:
-   - **Homebrew Services**: Uses `brew services` to manage dnsmasq. The service starts automatically on boot and is managed by launchd. Recommended for most users.
-   - **Local Process**: Runs dnsmasq directly as a process. Provides full control but won't persist after reboot.
-3. View current service status (Running/Stopped/Error)
-4. Use buttons to Start, Stop, or Restart the service
-5. Click "Validate Config" to check for syntax errors before starting
-6. Click "Settings" to configure custom paths for the dnsmasq binary and config file
 
-### Log Viewer
-1. Navigate to "Log Viewer" in the sidebar
-2. Logs are displayed in real-time
-3. Use the search box to filter entries
-4. Toggle "Auto-scroll" to follow new entries
-5. Click "Export" to save logs to a file
+Choose your style:
 
-## Execution Modes
+- **Homebrew Mode** - Set it and forget it. Auto-starts on boot.
+- **Local Mode** - Full manual control. Perfect for testing.
 
-### Homebrew Services Mode (Default)
-- Uses `brew services start/stop/restart dnsmasq`
-- Service is managed by launchd
-- Automatically starts on system boot
-- Recommended for production use
+### Keyboard Shortcuts
 
-### Local Process Mode
-- Runs dnsmasq directly using the binary path
-- Full control over the process lifecycle
-- Does not persist after reboot
-- Useful for testing or temporary DNS setups
+| Action | Keys |
+|--------|------|
+| Reload Config | `⌘R` |
+| Start Service | `⇧⌘S` |
+| Stop Service | `⇧⌘X` |
+| Restart Service | `⇧⌘R` |
+| Help | `⌘?` |
 
-To switch modes, go to Service Control and use the mode selector or click Settings.
+## 🔧 Build
 
-## Configuration File Location
-
-dnsmasqGUI reads and writes to (auto-detected):
-```
-/opt/homebrew/etc/dnsmasq.conf    # Apple Silicon Macs
-/usr/local/etc/dnsmasq.conf       # Intel Macs
-/etc/dnsmasq.conf                 # System-wide install
-```
-
-You can customize the path in Service Control → Settings.
-
-## Permissions
-
-The app requires administrator privileges to:
-- Read/write the dnsmasq configuration file
-- Start/stop the dnsmasq service via `brew services`
-
-You will be prompted for your password when performing these actions.
-
-## Troubleshooting
-
-### "dnsmasq not found in services list"
-Ensure dnsmasq is installed and registered:
 ```bash
-brew services list | grep dnsmasq
-```
-If not listed, reinstall:
-```bash
-brew reinstall dnsmasq
+# Prerequisites
+brew install dnsmasq
+xcode-select --install
+
+# Clone & Build
+git clone https://github.com/thejustinjames/dnsmasqGUI.git
+cd dnsmasqGUI
+
+make build      # Build debug version
+make release    # Build release + create ZIP
+make dmg        # Create DMG installer
+make clean      # Clean build artifacts
+make run        # Build and launch
 ```
 
-### "Configuration file not found"
-Create the configuration file:
-```bash
-sudo touch /opt/homebrew/etc/dnsmasq.conf
-sudo chmod 644 /opt/homebrew/etc/dnsmasq.conf
+Build artifacts land in `./dist/`:
+```
+dist/
+├── dnsmasqGUI.app                    # The app
+├── dnsmasqGUI-v1.0.0-macOS.zip       # Distributable archive
+└── dnsmasqGUI-v1.0.0-macOS.dmg       # Installer image
 ```
 
-### Service won't start
-Check for port conflicts (port 53):
+## 🩺 Troubleshooting
+
+<details>
+<summary><b>Service won't start?</b></summary>
+
+Check if something else is hogging port 53:
 ```bash
 sudo lsof -i :53
 ```
-Stop any conflicting services before starting dnsmasq.
+Kill the imposter, then try again.
+</details>
 
-### Permission denied errors
-Ensure you have admin rights and that the app is allowed to run AppleScript:
-1. Open System Settings → Privacy & Security → Automation
-2. Enable dnsmasqGUI for "System Events"
+<details>
+<summary><b>No logs showing?</b></summary>
 
-### Logs not appearing
-Check if logging is enabled in dnsmasq.conf:
+Enable logging in your config:
 ```bash
 echo "log-queries" | sudo tee -a /opt/homebrew/etc/dnsmasq.conf
 echo "log-facility=/opt/homebrew/var/log/dnsmasq.log" | sudo tee -a /opt/homebrew/etc/dnsmasq.conf
 sudo brew services restart dnsmasq
 ```
+</details>
 
-## Keyboard Shortcuts
+<details>
+<summary><b>Permission errors?</b></summary>
 
-| Action | Shortcut |
-|--------|----------|
-| Reload Configuration | `Cmd + R` |
-| Start Service | `Cmd + Shift + S` |
-| Stop Service | `Cmd + Shift + X` |
-| Restart Service | `Cmd + Shift + R` |
+1. Open **System Settings** → **Privacy & Security** → **Automation**
+2. Enable dnsmasqGUI for "System Events"
+</details>
 
-## Contributing
+## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Found a bug? Have an idea? PRs and issues welcome!
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Fork it
+2. Branch it (`git checkout -b feature/cool-stuff`)
+3. Commit it (`git commit -m 'Add cool stuff'`)
+4. Push it (`git push origin feature/cool-stuff`)
+5. PR it
 
-## License
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full scoop.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 📄 License
 
-## Acknowledgments
+MIT License - do what you want, just keep the copyright notice.
 
-- [dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) - The underlying DNS/DHCP server
-- [Homebrew](https://brew.sh/) - Package manager for macOS
+See [LICENSE](LICENSE) for details.
+
+---
+
+<p align="center">
+  Made with ☕ by <a href="https://github.com/thejustinjames">Justin James</a>
+  <br>
+  <sub>JJ • 2026</sub>
+</p>
