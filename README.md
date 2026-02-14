@@ -10,8 +10,11 @@ A native macOS GUI application for managing dnsmasq, built with SwiftUI. Provide
 
 - **DNS Configuration** - Manage DNS records, upstream servers, and domain overrides
 - **DHCP Configuration** - Configure IP ranges, static leases, and DHCP options
-- **Service Control** - Start, stop, and restart dnsmasq via Homebrew services
+- **Service Control** - Start, stop, and restart dnsmasq with two execution modes:
+  - **Homebrew Services** - Managed via `brew services` (persistent, auto-start on boot)
+  - **Local Process** - Run dnsmasq directly (manual control, no persistence)
 - **Log Viewer** - Real-time log monitoring with filtering and export
+- **Path Configuration** - Customize dnsmasq binary and config file locations
 
 ## Prerequisites
 
@@ -22,17 +25,20 @@ A native macOS GUI application for managing dnsmasq, built with SwiftUI. Provide
 - Xcode 15.0 or later
 - Install from the [Mac App Store](https://apps.apple.com/app/xcode/id497799835)
 
-### 3. Homebrew
-If you don't have Homebrew installed:
+### 3. Homebrew (Optional but Recommended)
+Homebrew is required for the "Homebrew Services" execution mode. If you don't have Homebrew installed:
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 ### 4. dnsmasq
-Install dnsmasq via Homebrew:
+**Option A: Install via Homebrew (Recommended)**
 ```bash
 brew install dnsmasq
 ```
+
+**Option B: Manual Installation**
+If you prefer not to use Homebrew, you can compile dnsmasq from source or use another package manager. The app supports custom binary paths via Settings.
 
 ## Installation
 
@@ -113,9 +119,13 @@ Or set your system DNS to `127.0.0.1` in System Settings → Network → DNS.
 
 ### Service Control
 1. Navigate to "Service Control" in the sidebar
-2. View current service status (Running/Stopped)
-3. Use buttons to Start, Stop, or Restart the service
-4. Click "Validate Config" to check for syntax errors
+2. **Choose Execution Mode**:
+   - **Homebrew Services**: Uses `brew services` to manage dnsmasq. The service starts automatically on boot and is managed by launchd. Recommended for most users.
+   - **Local Process**: Runs dnsmasq directly as a process. Provides full control but won't persist after reboot.
+3. View current service status (Running/Stopped/Error)
+4. Use buttons to Start, Stop, or Restart the service
+5. Click "Validate Config" to check for syntax errors before starting
+6. Click "Settings" to configure custom paths for the dnsmasq binary and config file
 
 ### Log Viewer
 1. Navigate to "Log Viewer" in the sidebar
@@ -124,17 +134,32 @@ Or set your system DNS to `127.0.0.1` in System Settings → Network → DNS.
 4. Toggle "Auto-scroll" to follow new entries
 5. Click "Export" to save logs to a file
 
+## Execution Modes
+
+### Homebrew Services Mode (Default)
+- Uses `brew services start/stop/restart dnsmasq`
+- Service is managed by launchd
+- Automatically starts on system boot
+- Recommended for production use
+
+### Local Process Mode
+- Runs dnsmasq directly using the binary path
+- Full control over the process lifecycle
+- Does not persist after reboot
+- Useful for testing or temporary DNS setups
+
+To switch modes, go to Service Control and use the mode selector or click Settings.
+
 ## Configuration File Location
 
-dnsmasqGUI reads and writes to:
+dnsmasqGUI reads and writes to (auto-detected):
 ```
-/opt/homebrew/etc/dnsmasq.conf
+/opt/homebrew/etc/dnsmasq.conf    # Apple Silicon Macs
+/usr/local/etc/dnsmasq.conf       # Intel Macs
+/etc/dnsmasq.conf                 # System-wide install
 ```
 
-For Intel Macs, the path may be:
-```
-/usr/local/etc/dnsmasq.conf
-```
+You can customize the path in Service Control → Settings.
 
 ## Permissions
 
