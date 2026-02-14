@@ -1,7 +1,7 @@
 import Foundation
 
 /// Represents a DNS record entry in dnsmasq configuration
-struct DNSRecord: Identifiable, Codable, Equatable {
+struct DNSRecord: Identifiable, Codable, Equatable, Hashable {
     let id: UUID
     var recordType: RecordType
     var domain: String

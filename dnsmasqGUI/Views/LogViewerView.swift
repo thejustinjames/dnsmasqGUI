@@ -130,7 +130,7 @@ struct LogViewerView: View {
                         .padding(.horizontal)
                         .padding(.vertical, 8)
                     }
-                    .onChange(of: logReader.logLines.count) { _, _ in
+                    .onChange(of: logReader.logLines.count) { _ in
                         if autoScroll, let lastLine = filteredLogs.last {
                             withAnimation {
                                 proxy.scrollTo(lastLine.id, anchor: .bottom)

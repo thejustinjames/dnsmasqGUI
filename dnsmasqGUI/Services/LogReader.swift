@@ -45,7 +45,9 @@ class LogReader: ObservableObject {
     }
 
     deinit {
-        stopMonitoring()
+        // Clean up dispatch source directly (can't call @MainActor methods from deinit)
+        dispatchSource?.cancel()
+        fileHandle?.closeFile()
     }
 
     /// Start monitoring the log file
