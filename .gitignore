@@ -32,3 +32,8 @@ playground.xcworkspace
 # IDE
 *.swp
 *~
+
+# Build artifacts
+build/
+dist/*
+!dist/.gitkeep

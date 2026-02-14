@@ -21,6 +21,7 @@
 		A10000000000000000000012 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* ConfigManager.swift */; };
 		A10000000000000000000013 /* LogReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* LogReader.swift */; };
 		A10000000000000000000014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* Assets.xcassets */; };
+		A10000000000000000000015 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* AboutView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		A20000000000000000000013 /* LogReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogReader.swift; sourceTree = "<group>"; };
 		A20000000000000000000014 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20000000000000000000015 /* dnsmasqGUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = dnsmasqGUI.entitlements; sourceTree = "<group>"; };
+		A20000000000000000000016 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* dnsmasqGUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dnsmasqGUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -93,6 +95,7 @@
 				A20000000000000000000008 /* DHCPConfigView.swift */,
 				A20000000000000000000009 /* ServiceControlView.swift */,
 				A20000000000000000000010 /* LogViewerView.swift */,
+				A20000000000000000000016 /* AboutView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -197,6 +200,7 @@
 				A10000000000000000000011 /* DnsmasqService.swift in Sources */,
 				A10000000000000000000012 /* ConfigManager.swift in Sources */,
 				A10000000000000000000013 /* LogReader.swift in Sources */,
+				A10000000000000000000015 /* AboutView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
