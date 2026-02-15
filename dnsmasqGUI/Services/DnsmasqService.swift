@@ -257,14 +257,24 @@ class DnsmasqService: ObservableObject {
                             pid = Int(components[pidIndex])
                         }
                         status = ServiceStatus(state: .running, pid: pid)
-                    } else if statusStr == "stopped" || statusStr == "none" {
+                        return
+                    } else if statusStr == "stopped" {
                         status = ServiceStatus(state: .stopped)
+                        return
+                    } else if statusStr == "none" {
+                        // "none" means brew services doesn't know the state
+                        // Check if the process is actually running
+                        Task {
+                            await checkLocalStatus()
+                        }
+                        return
                     } else if statusStr == "error" {
                         status = ServiceStatus(state: .error, errorMessage: "Service in error state")
+                        return
                     } else {
                         status = ServiceStatus(state: .unknown)
+                        return
                     }
-                    return
                 }
             }
         }
