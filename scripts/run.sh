@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# dnsmasqGUI Run Script
+# Handed Run Script
 # Builds (if needed) and runs the application
 
 set -e
@@ -8,7 +8,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 DIST_DIR="$PROJECT_DIR/dist"
-APP_PATH="$DIST_DIR/dnsmasqGUI.app"
+APP_PATH="$DIST_DIR/Handed.app"
 
 # Check if app exists, build if not
 if [ ! -d "$APP_PATH" ]; then
@@ -16,5 +16,5 @@ if [ ! -d "$APP_PATH" ]; then
     "$SCRIPT_DIR/build.sh" Debug
 fi
 
-echo "Launching dnsmasqGUI..."
+echo "Launching Handed..."
 open "$APP_PATH"

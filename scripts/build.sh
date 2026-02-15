@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# dnsmasqGUI Build Script
+# Handed Build Script
 # Builds the application for the specified configuration
 
 set -e
@@ -8,11 +8,12 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 DIST_DIR="$PROJECT_DIR/dist"
+APP_NAME="Handed"
 
 # Default configuration
 CONFIGURATION="${1:-Release}"
 
-echo "=== dnsmasqGUI Build Script ==="
+echo "=== Handed Build Script ==="
 echo "Configuration: $CONFIGURATION"
 echo "Project Directory: $PROJECT_DIR"
 echo ""
@@ -28,7 +29,7 @@ xcodebuild -project "$PROJECT_DIR/dnsmasqGUI.xcodeproj" \
     clean 2>/dev/null || true
 
 # Build the project
-echo "Building dnsmasqGUI ($CONFIGURATION)..."
+echo "Building Handed ($CONFIGURATION)..."
 xcodebuild -project "$PROJECT_DIR/dnsmasqGUI.xcodeproj" \
     -scheme dnsmasqGUI \
     -configuration "$CONFIGURATION" \
@@ -36,7 +37,7 @@ xcodebuild -project "$PROJECT_DIR/dnsmasqGUI.xcodeproj" \
     build
 
 # Find the built app
-APP_PATH="$PROJECT_DIR/build/Build/Products/$CONFIGURATION/dnsmasqGUI.app"
+APP_PATH="$PROJECT_DIR/build/Build/Products/$CONFIGURATION/${APP_NAME}.app"
 
 if [ -d "$APP_PATH" ]; then
     echo ""
@@ -45,14 +46,14 @@ if [ -d "$APP_PATH" ]; then
 
     # Copy to dist folder
     echo "Copying to dist folder..."
-    rm -rf "$DIST_DIR/dnsmasqGUI.app"
+    rm -rf "$DIST_DIR/${APP_NAME}.app"
     cp -R "$APP_PATH" "$DIST_DIR/"
 
     echo ""
     echo "=== Build Complete ==="
-    echo "Application: $DIST_DIR/dnsmasqGUI.app"
+    echo "Application: $DIST_DIR/${APP_NAME}.app"
     echo ""
-    echo "To run: open $DIST_DIR/dnsmasqGUI.app"
+    echo "To run: open $DIST_DIR/${APP_NAME}.app"
 else
     echo "Error: Build failed - app not found at $APP_PATH"
     exit 1

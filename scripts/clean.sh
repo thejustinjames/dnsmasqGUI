@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# dnsmasqGUI Clean Script
+# Handed Clean Script
 # Removes all build artifacts
 
 set -e
@@ -8,7 +8,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
-echo "=== dnsmasqGUI Clean ==="
+echo "=== Handed Clean ==="
 echo ""
 
 # Clean Xcode build
