@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# dnsmasqGUI DMG Creation Script
+# Handed DMG Creation Script
 # Creates a distributable DMG file
 
 set -e
@@ -8,17 +8,18 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 DIST_DIR="$PROJECT_DIR/dist"
-VERSION="1.0.0"
-DMG_NAME="dnsmasqGUI-v${VERSION}-macOS"
+VERSION="2.1.0"
+APP_NAME="dnsmasqGUI"  # Xcode project name
+DMG_NAME="Handed-v${VERSION}-macOS"
 DMG_PATH="$DIST_DIR/${DMG_NAME}.dmg"
-VOLUME_NAME="dnsmasqGUI"
+VOLUME_NAME="Handed"
 
-echo "=== dnsmasqGUI DMG Creation ==="
+echo "=== Handed DMG Creation ==="
 echo "Version: $VERSION"
 echo ""
 
 # Ensure app exists
-APP_PATH="$DIST_DIR/dnsmasqGUI.app"
+APP_PATH="$DIST_DIR/${APP_NAME}.app"
 if [ ! -d "$APP_PATH" ]; then
     echo "App not found. Building first..."
     "$SCRIPT_DIR/build.sh" Release
@@ -55,4 +56,4 @@ echo "Size: $(du -h "$DMG_PATH" | cut -f1)"
 echo ""
 echo "To install:"
 echo "  1. Open the DMG"
-echo "  2. Drag dnsmasqGUI to Applications"
+echo "  2. Drag Handed to Applications"
