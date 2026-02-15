@@ -8,6 +8,7 @@ enum NavigationItem: String, CaseIterable, Identifiable {
     case logs = "Log Viewer"
     case troubleshooting = "Troubleshooting"
     case backup = "Backup & Import"
+    case settings = "Settings"
 
     var id: String { rawValue }
 
@@ -20,6 +21,7 @@ enum NavigationItem: String, CaseIterable, Identifiable {
         case .logs: return "doc.text.magnifyingglass"
         case .troubleshooting: return "wrench.and.screwdriver"
         case .backup: return "arrow.triangle.2.circlepath"
+        case .settings: return "gear"
         }
     }
 }
@@ -98,6 +100,8 @@ struct ContentView: View {
                     TroubleshootingView()
                 case .backup:
                     BackupRestoreView()
+                case .settings:
+                    SettingsView()
                 case .none:
                     WelcomeView()
                 }

@@ -27,6 +27,7 @@
 		A10000000000000000000019 /* ResolverConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* ResolverConfigView.swift */; };
 		A10000000000000000000020 /* TroubleshootingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* TroubleshootingView.swift */; };
 		A10000000000000000000021 /* BackupRestoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* BackupRestoreView.swift */; };
+		A10000000000000000000022 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		A20000000000000000000019 /* ResolverConfigView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolverConfigView.swift; sourceTree = "<group>"; };
 		A20000000000000000000020 /* TroubleshootingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TroubleshootingView.swift; sourceTree = "<group>"; };
 		A20000000000000000000021 /* BackupRestoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupRestoreView.swift; sourceTree = "<group>"; };
+		A20000000000000000000022 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* dnsmasqGUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dnsmasqGUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -110,6 +112,7 @@
 				A20000000000000000000019 /* ResolverConfigView.swift */,
 				A20000000000000000000020 /* TroubleshootingView.swift */,
 				A20000000000000000000021 /* BackupRestoreView.swift */,
+				A20000000000000000000022 /* SettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -221,6 +224,7 @@
 				A10000000000000000000019 /* ResolverConfigView.swift in Sources */,
 				A10000000000000000000020 /* TroubleshootingView.swift in Sources */,
 				A10000000000000000000021 /* BackupRestoreView.swift in Sources */,
+				A10000000000000000000022 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
