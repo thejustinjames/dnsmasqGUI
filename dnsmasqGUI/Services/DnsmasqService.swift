@@ -269,7 +269,11 @@ class DnsmasqService: ObservableObject {
                         }
                         return
                     } else if statusStr == "error" {
-                        status = ServiceStatus(state: .error, errorMessage: "Service in error state")
+                        // "error" from brew services, but process might still be running
+                        // Check if the process is actually running
+                        Task {
+                            await checkLocalStatus()
+                        }
                         return
                     } else {
                         status = ServiceStatus(state: .unknown)

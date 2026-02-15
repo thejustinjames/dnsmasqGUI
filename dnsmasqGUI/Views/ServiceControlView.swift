@@ -72,6 +72,18 @@ struct ServiceControlView: View {
                         }
 
                         Spacer()
+
+                        // Refresh button
+                        Button(action: {
+                            Task {
+                                await dnsmasqService.checkStatus()
+                            }
+                        }) {
+                            Image(systemName: "arrow.clockwise")
+                                .font(.title2)
+                        }
+                        .buttonStyle(.borderless)
+                        .help("Refresh Status")
                     }
                     .padding()
                     .background(
