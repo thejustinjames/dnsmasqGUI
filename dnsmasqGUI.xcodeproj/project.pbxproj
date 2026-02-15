@@ -22,6 +22,11 @@
 		A10000000000000000000013 /* LogReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* LogReader.swift */; };
 		A10000000000000000000014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* Assets.xcassets */; };
 		A10000000000000000000015 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* AboutView.swift */; };
+		A10000000000000000000017 /* ResolverFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* ResolverFile.swift */; };
+		A10000000000000000000018 /* ResolverManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000018 /* ResolverManager.swift */; };
+		A10000000000000000000019 /* ResolverConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* ResolverConfigView.swift */; };
+		A10000000000000000000020 /* TroubleshootingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* TroubleshootingView.swift */; };
+		A10000000000000000000021 /* BackupRestoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* BackupRestoreView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +46,11 @@
 		A20000000000000000000014 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20000000000000000000015 /* dnsmasqGUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = dnsmasqGUI.entitlements; sourceTree = "<group>"; };
 		A20000000000000000000016 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		A20000000000000000000017 /* ResolverFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolverFile.swift; sourceTree = "<group>"; };
+		A20000000000000000000018 /* ResolverManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolverManager.swift; sourceTree = "<group>"; };
+		A20000000000000000000019 /* ResolverConfigView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolverConfigView.swift; sourceTree = "<group>"; };
+		A20000000000000000000020 /* TroubleshootingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TroubleshootingView.swift; sourceTree = "<group>"; };
+		A20000000000000000000021 /* BackupRestoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupRestoreView.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* dnsmasqGUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dnsmasqGUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -84,6 +94,7 @@
 				A20000000000000000000004 /* DHCPLease.swift */,
 				A20000000000000000000005 /* DnsmasqConfig.swift */,
 				A20000000000000000000006 /* ServiceStatus.swift */,
+				A20000000000000000000017 /* ResolverFile.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -96,6 +107,9 @@
 				A20000000000000000000009 /* ServiceControlView.swift */,
 				A20000000000000000000010 /* LogViewerView.swift */,
 				A20000000000000000000016 /* AboutView.swift */,
+				A20000000000000000000019 /* ResolverConfigView.swift */,
+				A20000000000000000000020 /* TroubleshootingView.swift */,
+				A20000000000000000000021 /* BackupRestoreView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -106,6 +120,7 @@
 				A20000000000000000000011 /* DnsmasqService.swift */,
 				A20000000000000000000012 /* ConfigManager.swift */,
 				A20000000000000000000013 /* LogReader.swift */,
+				A20000000000000000000018 /* ResolverManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -201,6 +216,11 @@
 				A10000000000000000000012 /* ConfigManager.swift in Sources */,
 				A10000000000000000000013 /* LogReader.swift in Sources */,
 				A10000000000000000000015 /* AboutView.swift in Sources */,
+				A10000000000000000000017 /* ResolverFile.swift in Sources */,
+				A10000000000000000000018 /* ResolverManager.swift in Sources */,
+				A10000000000000000000019 /* ResolverConfigView.swift in Sources */,
+				A10000000000000000000020 /* TroubleshootingView.swift in Sources */,
+				A10000000000000000000021 /* BackupRestoreView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

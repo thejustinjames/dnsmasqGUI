@@ -64,7 +64,7 @@ struct DnsmasqConfig {
     func toConfigString() -> String {
         var lines: [String] = []
         var processedDNS = Set<UUID>()
-        var processedDHCP = Set<UUID>()
+        _ = Set<UUID>() // processedDHCP - reserved for future DHCP processing
 
         // Process raw lines, replacing parsed entries with updated versions
         for rawLine in rawLines {

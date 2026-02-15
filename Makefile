@@ -1,4 +1,4 @@
-# dnsmasqGUI Makefile
+# Handed (formerly dnsmasqGUI) Makefile
 # Simple commands for building and running the application
 
 .PHONY: all build release dmg clean run help
@@ -28,7 +28,7 @@ run:
 
 # Show help
 help:
-	@echo "dnsmasqGUI Build System"
+	@echo "Handed Build System"
 	@echo ""
 	@echo "Available targets:"
 	@echo "  make build    - Build debug version"

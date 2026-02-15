@@ -3,8 +3,11 @@ import SwiftUI
 enum NavigationItem: String, CaseIterable, Identifiable {
     case dns = "DNS Configuration"
     case dhcp = "DHCP Configuration"
+    case resolvers = "Resolver Files"
     case service = "Service Control"
     case logs = "Log Viewer"
+    case troubleshooting = "Troubleshooting"
+    case backup = "Backup & Import"
 
     var id: String { rawValue }
 
@@ -12,8 +15,11 @@ enum NavigationItem: String, CaseIterable, Identifiable {
         switch self {
         case .dns: return "network"
         case .dhcp: return "server.rack"
+        case .resolvers: return "folder.badge.gearshape"
         case .service: return "gearshape.2"
         case .logs: return "doc.text.magnifyingglass"
+        case .troubleshooting: return "wrench.and.screwdriver"
+        case .backup: return "arrow.triangle.2.circlepath"
         }
     }
 }
@@ -37,25 +43,25 @@ struct ContentView: View {
 
                 // Footer with logo and version
                 HStack(spacing: 8) {
-                    // Mini JJ Logo
+                    // Mini Handed Logo
                     ZStack {
                         RoundedRectangle(cornerRadius: 6)
                             .fill(
                                 LinearGradient(
-                                    colors: [.blue, .purple],
+                                    colors: [.orange, .red],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 )
                             )
                             .frame(width: 28, height: 28)
 
-                        Text("JJ")
-                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                        Image(systemName: "hand.raised.fill")
+                            .font(.system(size: 14, weight: .bold))
                             .foregroundColor(.white)
                     }
 
                     VStack(alignment: .leading, spacing: 1) {
-                        Text("dnsmasqGUI")
+                        Text("Handed")
                             .font(.caption)
                             .fontWeight(.medium)
                         Text("v\(AppInfo.version)")
@@ -82,10 +88,16 @@ struct ContentView: View {
                     DNSConfigView()
                 case .dhcp:
                     DHCPConfigView()
+                case .resolvers:
+                    ResolverConfigView()
                 case .service:
                     ServiceControlView()
                 case .logs:
                     LogViewerView()
+                case .troubleshooting:
+                    TroubleshootingView()
+                case .backup:
+                    BackupRestoreView()
                 case .none:
                     WelcomeView()
                 }
@@ -117,21 +129,21 @@ struct WelcomeView: View {
                 RoundedRectangle(cornerRadius: 24)
                     .fill(
                         LinearGradient(
-                            colors: [.blue, .purple],
+                            colors: [.orange, .red],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
                     .frame(width: 120, height: 120)
 
-                Text("JJ")
-                    .font(.system(size: 56, weight: .bold, design: .rounded))
+                Image(systemName: "hand.raised.fill")
+                    .font(.system(size: 56, weight: .bold))
                     .foregroundColor(.white)
             }
-            .shadow(color: .blue.opacity(0.3), radius: 20, x: 0, y: 10)
+            .shadow(color: .orange.opacity(0.3), radius: 20, x: 0, y: 10)
 
             VStack(spacing: 8) {
-                Text("dnsmasqGUI")
+                Text("Handed")
                     .font(.largeTitle)
                     .fontWeight(.bold)
 
@@ -149,8 +161,11 @@ struct WelcomeView: View {
             VStack(alignment: .leading, spacing: 12) {
                 QuickTip(icon: "network", title: "DNS Configuration", description: "Manage DNS records and overrides")
                 QuickTip(icon: "server.rack", title: "DHCP Configuration", description: "Configure IP ranges and static leases")
+                QuickTip(icon: "folder.badge.gearshape", title: "Resolver Files", description: "Configure /etc/resolver for DNS routing")
                 QuickTip(icon: "gearshape.2", title: "Service Control", description: "Start, stop, and monitor dnsmasq")
                 QuickTip(icon: "doc.text.magnifyingglass", title: "Log Viewer", description: "View real-time DNS/DHCP logs")
+                QuickTip(icon: "wrench.and.screwdriver", title: "Troubleshooting", description: "DNS tools, cache flush, and diagnostics")
+                QuickTip(icon: "arrow.triangle.2.circlepath", title: "Backup & Import", description: "Backup configs, import hosts, TLD presets")
             }
         }
         .padding(40)

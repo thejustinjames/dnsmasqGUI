@@ -177,7 +177,6 @@ class DnsmasqService: ObservableObject {
         }
 
         // Start dnsmasq with admin privileges (needed for port 53)
-        let command = "\(dnsmasqPath) -C \(configPath) --keep-in-foreground &"
         let script = """
             do shell script "\(dnsmasqPath) -C \(configPath)" with administrator privileges
             """
