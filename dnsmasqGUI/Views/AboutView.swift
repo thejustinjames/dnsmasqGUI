@@ -259,7 +259,7 @@ struct HelpSection: View {
 
 // App version info
 struct AppInfo {
-    static let version = "2.0.0"
+    static let version = "2.1.0"
     static let build = "1"
     static let name = "Handed"
     static let author = "Justin James"

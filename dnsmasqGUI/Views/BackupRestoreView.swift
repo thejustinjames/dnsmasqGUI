@@ -11,6 +11,7 @@ struct BackupRestoreView: View {
     @State private var showImportSheet: Bool = false
     @State private var importText: String = ""
     @State private var showExportSheet: Bool = false
+    @State private var customDomain: String = ""
 
     var body: some View {
         VStack(spacing: 0) {
@@ -118,8 +119,13 @@ struct BackupRestoreView: View {
                     // Quick TLD Presets Section
                     SectionCard(title: "Quick TLD Presets", icon: "wand.and.stars", color: .pink) {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("One-click setup for common local development TLDs. Creates both DNS records and resolver files.")
+                            Text("One-click setup for common local development TLDs. Creates resolver files pointing to 127.0.0.1.")
                                 .font(.callout)
+                                .foregroundColor(.secondary)
+
+                            Text("Local Development")
+                                .font(.caption)
+                                .fontWeight(.medium)
                                 .foregroundColor(.secondary)
 
                             LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 8) {
@@ -143,7 +149,94 @@ struct BackupRestoreView: View {
                                 }
                             }
 
-                            Text("Each preset creates a resolver file pointing to 127.0.0.1")
+                            Divider()
+
+                            Text("Kubernetes / Cloud")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.secondary)
+
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))], spacing: 8) {
+                                PresetButton(tld: "cluster.local", description: "K8s internal") {
+                                    await setupTLDPreset("cluster.local")
+                                }
+                                PresetButton(tld: "svc.local", description: "K8s services") {
+                                    await setupTLDPreset("svc.local")
+                                }
+                            }
+                        }
+                    }
+
+                    // AWS Emulation Section
+                    SectionCard(title: "AWS Local Emulation", icon: "cloud", color: .orange) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Route AWS service domains to localhost for local development with LocalStack, ElasticMQ, etc.")
+                                .font(.callout)
+                                .foregroundColor(.secondary)
+
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 140))], spacing: 8) {
+                                PresetButton(tld: "amazonaws.com", description: "All AWS") {
+                                    await setupTLDPreset("amazonaws.com")
+                                }
+                                PresetButton(tld: "cache.amazonaws.com", description: "ElastiCache") {
+                                    await setupTLDPreset("cache.amazonaws.com")
+                                }
+                                PresetButton(tld: "rds.amazonaws.com", description: "RDS") {
+                                    await setupTLDPreset("rds.amazonaws.com")
+                                }
+                                PresetButton(tld: "sqs.amazonaws.com", description: "SQS") {
+                                    await setupTLDPreset("sqs.amazonaws.com")
+                                }
+                                PresetButton(tld: "s3.amazonaws.com", description: "S3") {
+                                    await setupTLDPreset("s3.amazonaws.com")
+                                }
+                            }
+
+                            // Warning about AWS SDK endpoints
+                            HStack(alignment: .top, spacing: 8) {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .foregroundColor(.orange)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Important: DNS alone is not enough for AWS SDK services")
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                    Text("You also need endpoint configuration in your app:")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                    Text("AWS_ENDPOINT_URL=http://localhost:4566\nCOGNITO_ENDPOINT=http://localhost:9229")
+                                        .font(.system(size: 10, design: .monospaced))
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            .padding(10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.orange.opacity(0.1))
+                            )
+                        }
+                    }
+
+                    // Custom Domain Section
+                    SectionCard(title: "Custom Domain", icon: "plus.circle", color: .gray) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Create a resolver for any custom domain.")
+                                .font(.callout)
+                                .foregroundColor(.secondary)
+
+                            HStack {
+                                TextField("Domain (e.g., mycompany.cloud)", text: $customDomain)
+                                    .textFieldStyle(.roundedBorder)
+
+                                Button("Create") {
+                                    Task {
+                                        await setupTLDPreset(customDomain)
+                                        customDomain = ""
+                                    }
+                                }
+                                .disabled(customDomain.trimmingCharacters(in: .whitespaces).isEmpty || isProcessing)
+                            }
+
+                            Text("Creates /etc/resolver/\(customDomain.isEmpty ? "domain" : customDomain) → 127.0.0.1")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }

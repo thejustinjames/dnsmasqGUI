@@ -8,7 +8,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 DIST_DIR="$PROJECT_DIR/dist"
-VERSION="2.0.0"
+VERSION="2.1.0"
 APP_NAME="dnsmasqGUI"  # Keep Xcode project name
 
 echo "=== Handed Release Build ==="
