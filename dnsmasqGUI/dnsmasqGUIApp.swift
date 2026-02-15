@@ -117,6 +117,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Apply menu bar only mode if enabled
         updateActivationPolicy()
+        // Apply saved appearance mode
+        applyAppearance()
     }
 
     private func updateActivationPolicy() {
@@ -124,6 +126,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.setActivationPolicy(.accessory)
         } else {
             NSApp.setActivationPolicy(.regular)
+        }
+    }
+
+    private func applyAppearance() {
+        let appearanceMode = UserDefaults.standard.string(forKey: "appearanceMode") ?? "System"
+        switch appearanceMode {
+        case "Light":
+            NSApp.appearance = NSAppearance(named: .aqua)
+        case "Dark":
+            NSApp.appearance = NSAppearance(named: .darkAqua)
+        default:
+            NSApp.appearance = nil
         }
     }
 

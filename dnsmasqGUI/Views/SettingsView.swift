@@ -1,9 +1,24 @@
 import SwiftUI
 import ServiceManagement
 
+enum AppearanceMode: String, CaseIterable {
+    case system = "System"
+    case light = "Light"
+    case dark = "Dark"
+
+    var icon: String {
+        switch self {
+        case .system: return "circle.lefthalf.filled"
+        case .light: return "sun.max.fill"
+        case .dark: return "moon.fill"
+        }
+    }
+}
+
 struct SettingsView: View {
     @AppStorage("menuBarOnlyMode") private var menuBarOnly = false
     @AppStorage("launchAtStartup") private var launchAtStartup = false
+    @AppStorage("appearanceMode") private var appearanceMode: String = AppearanceMode.system.rawValue
     @State private var showingRestartAlert = false
 
     var body: some View {
@@ -53,7 +68,33 @@ struct SettingsView: View {
                     }
                     .padding(4)
                 } label: {
-                    Label("Startup & Appearance", systemImage: "power")
+                    Label("Startup", systemImage: "power")
+                }
+
+                // Appearance Section
+                GroupBox {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Theme")
+                            .fontWeight(.medium)
+
+                        Picker("Appearance", selection: $appearanceMode) {
+                            ForEach(AppearanceMode.allCases, id: \.rawValue) { mode in
+                                Label(mode.rawValue, systemImage: mode.icon)
+                                    .tag(mode.rawValue)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .onChange(of: appearanceMode) { newValue in
+                            updateAppearance(mode: AppearanceMode(rawValue: newValue) ?? .system)
+                        }
+
+                        Text("Choose how Handed appears. Select System to automatically match your Mac's appearance.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(4)
+                } label: {
+                    Label("Appearance", systemImage: "paintbrush.fill")
                 }
 
                 // Menu Bar Section
@@ -167,6 +208,17 @@ struct SettingsView: View {
             NSApp.setActivationPolicy(.accessory)
         } else {
             NSApp.setActivationPolicy(.regular)
+        }
+    }
+
+    private func updateAppearance(mode: AppearanceMode) {
+        switch mode {
+        case .system:
+            NSApp.appearance = nil
+        case .light:
+            NSApp.appearance = NSAppearance(named: .aqua)
+        case .dark:
+            NSApp.appearance = NSAppearance(named: .darkAqua)
         }
     }
 }
