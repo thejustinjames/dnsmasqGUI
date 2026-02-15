@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/macOS-13.0+-007AFF?style=flat-square&logo=apple&logoColor=white" alt="macOS 13.0+" />
   <img src="https://img.shields.io/badge/Swift-5.9+-F05138?style=flat-square&logo=swift&logoColor=white" alt="Swift 5.9+" />
   <img src="https://img.shields.io/badge/SwiftUI-Native-5c5ce6?style=flat-square&logo=swift&logoColor=white" alt="SwiftUI" />
-  <img src="https://img.shields.io/badge/Version-2.0.0-green?style=flat-square" alt="v2.0.0" />
+  <img src="https://img.shields.io/badge/Version-2.1.0-green?style=flat-square" alt="v2.1.0" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License" />
 </p>
 
@@ -51,14 +51,16 @@ sudo dscacheutil -flushcache          Menu bar → Flush DNS
 | **Service Control** | Run via Homebrew Services or as a local process |
 | **Live Log Viewer** | Watch DNS queries in real-time with filtering |
 
-### New in v2.0.0
+### New in v2.1.0
 | Feature | Description |
 |---------|-------------|
 | **🤚 Menu Bar App** | Quick access to start/stop, flush DNS, and status |
 | **💾 Backup & Restore** | Save and restore all configurations |
 | **📥 Import/Export** | Import from `/etc/hosts`, export configs |
 | **⚡ Quick TLD Presets** | One-click setup for `.local`, `.test`, `.dev`, etc. |
+| **☁️ AWS Emulation** | Presets for LocalStack, ElastiCache, RDS, S3, SQS |
 | **🔧 Troubleshooting Tools** | DNS testing, cache flush, port checker |
+| **✏️ Custom Domains** | Add any custom domain resolver |
 
 ## 🚀 Quick Start
 
@@ -155,8 +157,26 @@ Build output:
 ```
 dist/
 ├── Handed.app
-├── Handed-v2.0.0-macOS.zip
-└── Handed-v2.0.0-macOS.dmg
+├── Handed-v2.1.0-macOS.zip
+└── Handed-v2.1.0-macOS.dmg
+```
+
+### AWS Local Emulation
+
+Handed includes presets for local AWS development with LocalStack, ElasticMQ, etc:
+
+| Preset | Routes |
+|--------|--------|
+| `amazonaws.com` | All AWS services |
+| `cache.amazonaws.com` | ElastiCache/Redis |
+| `rds.amazonaws.com` | RDS databases |
+| `sqs.amazonaws.com` | SQS queues |
+| `s3.amazonaws.com` | S3 storage |
+
+**Important:** DNS routing alone isn't enough for AWS SDKs. You also need endpoint configuration:
+```bash
+export AWS_ENDPOINT_URL=http://localhost:4566
+export COGNITO_ENDPOINT=http://localhost:9229
 ```
 
 ## 🩺 Troubleshooting
