@@ -1,4 +1,6 @@
 import SwiftUI
+import ServiceManagement
+import UserNotifications
 
 @main
 struct dnsmasqGUIApp: App {
@@ -92,8 +94,49 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var dnsmasqService: DnsmasqService?
     private var statusObserver: NSObjectProtocol?
 
+    // User preferences
+    private let menuBarOnlyKey = "menuBarOnlyMode"
+    private let launchAtStartupKey = "launchAtStartup"
+
+    var isMenuBarOnly: Bool {
+        get { UserDefaults.standard.bool(forKey: menuBarOnlyKey) }
+        set {
+            UserDefaults.standard.set(newValue, forKey: menuBarOnlyKey)
+            updateActivationPolicy()
+        }
+    }
+
+    var launchAtStartup: Bool {
+        get { UserDefaults.standard.bool(forKey: launchAtStartupKey) }
+        set {
+            UserDefaults.standard.set(newValue, forKey: launchAtStartupKey)
+            updateLaunchAtStartup(enabled: newValue)
+        }
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Menu bar will be set up when ContentView appears
+        // Apply menu bar only mode if enabled
+        updateActivationPolicy()
+    }
+
+    private func updateActivationPolicy() {
+        if isMenuBarOnly {
+            NSApp.setActivationPolicy(.accessory)
+        } else {
+            NSApp.setActivationPolicy(.regular)
+        }
+    }
+
+    private func updateLaunchAtStartup(enabled: Bool) {
+        do {
+            if enabled {
+                try SMAppService.mainApp.register()
+            } else {
+                try SMAppService.mainApp.unregister()
+            }
+        } catch {
+            print("Failed to update launch at startup: \(error)")
+        }
     }
 
     func setupMenuBar(dnsmasqService: DnsmasqService) {
@@ -158,7 +201,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func setupMenu() {
         let menu = NSMenu()
+        menu.title = "Handed - DNSmasqGUI"
+
         let state = dnsmasqService?.status.state ?? .unknown
+
+        // App title header
+        let titleItem = NSMenuItem(title: "Handed - DNSmasqGUI", action: nil, keyEquivalent: "")
+        titleItem.isEnabled = false
+        if let font = NSFont.boldSystemFont(ofSize: 13) as NSFont? {
+            titleItem.attributedTitle = NSAttributedString(string: "Handed - DNSmasqGUI", attributes: [.font: font])
+        }
+        menu.addItem(titleItem)
+
+        menu.addItem(NSMenuItem.separator())
 
         // Status header
         let statusText: String
@@ -204,6 +259,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let refreshItem = NSMenuItem(title: "Refresh Status", action: #selector(refreshStatus), keyEquivalent: "")
         refreshItem.target = self
         menu.addItem(refreshItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        // Preferences submenu
+        let prefsSubmenu = NSMenu()
+
+        let menuBarOnlyItem = NSMenuItem(title: "Menu Bar Only (Hide Dock Icon)", action: #selector(toggleMenuBarOnly), keyEquivalent: "")
+        menuBarOnlyItem.target = self
+        menuBarOnlyItem.state = isMenuBarOnly ? .on : .off
+        prefsSubmenu.addItem(menuBarOnlyItem)
+
+        let launchItem = NSMenuItem(title: "Launch at Startup", action: #selector(toggleLaunchAtStartup), keyEquivalent: "")
+        launchItem.target = self
+        launchItem.state = launchAtStartup ? .on : .off
+        prefsSubmenu.addItem(launchItem)
+
+        let prefsItem = NSMenuItem(title: "Preferences", action: nil, keyEquivalent: "")
+        prefsItem.submenu = prefsSubmenu
+        menu.addItem(prefsItem)
 
         menu.addItem(NSMenuItem.separator())
 
@@ -271,13 +345,48 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    @objc private func toggleMenuBarOnly() {
+        isMenuBarOnly.toggle()
+        setupMenu() // Refresh menu to update checkmark
+
+        if isMenuBarOnly {
+            showNotification(title: "Menu Bar Only", message: "Handed will now run in the menu bar only")
+        } else {
+            showNotification(title: "Dock Icon Enabled", message: "Handed will now show in the Dock")
+        }
+    }
+
+    @objc private func toggleLaunchAtStartup() {
+        launchAtStartup.toggle()
+        setupMenu() // Refresh menu to update checkmark
+
+        if launchAtStartup {
+            showNotification(title: "Launch at Startup", message: "Handed will now start automatically at login")
+        } else {
+            showNotification(title: "Launch at Startup Disabled", message: "Handed will no longer start at login")
+        }
+    }
+
     @objc private func openMainWindow() {
+        // If in menu bar only mode, temporarily show in dock to bring window forward
+        if isMenuBarOnly {
+            NSApp.setActivationPolicy(.regular)
+        }
+
         NSApp.activate(ignoringOtherApps: true)
+
         if let window = NSApp.windows.first(where: { $0.isVisible || $0.isMiniaturized }) {
             window.makeKeyAndOrderFront(nil)
             window.deminiaturize(nil)
         } else if let window = NSApp.windows.first {
             window.makeKeyAndOrderFront(nil)
+        }
+
+        // Return to menu bar only mode after a delay if enabled
+        if isMenuBarOnly {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                NSApp.setActivationPolicy(.accessory)
+            }
         }
     }
 
@@ -296,5 +405,3 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         center.add(request)
     }
 }
-
-import UserNotifications
